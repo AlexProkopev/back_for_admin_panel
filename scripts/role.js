@@ -1,7 +1,7 @@
-export const role = {
-  admin: "admin",
-  chef: "chef",
-  manager: "manager",
-  waiter: "waiter",
-  storekeeper: "storekeeper",
+const role = {
+  admin: 'admin',
+  waiter: 'waiter',
+  chef: 'chef'
 };
+
+module.exports = { role };

@@ -10,6 +10,7 @@
   },
   "name": "back_for_admin_panel",
   "version": "1.0.0",
+  "type": "git",
   "main": "index.js",
   "scripts": {
     "start": "node server.js",

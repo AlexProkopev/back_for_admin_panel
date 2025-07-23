@@ -1,3 +1,5 @@
+
+
 function checkRole(allowedRoles = []) {
   return function (req, res, next) {
     const user = req.admin;

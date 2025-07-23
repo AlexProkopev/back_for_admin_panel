@@ -5,7 +5,7 @@ const tableSchema = new mongoose.Schema(
     number: { type: Number, required: true, unique: true },
     seats: { type: Number, required: true },
     location: { type: String, default: "Зал" },
-    isAvailable: { type: Boolean, default: true },
+    isOccupied: { type: Boolean, default: false },
   },
   { timestamps: true }
 );
