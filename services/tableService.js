@@ -8,8 +8,8 @@ function getAllTables() {
   return Table.find();
 }
 
-function updateAvailability(id, isAvailable) {
-  return Table.findByIdAndUpdate(id, { isAvailable }, { new: true });
+function updateAvailability(id, isOccupied) {
+  return Table.findByIdAndUpdate(id, { isOccupied }, { new: true });
 }
 
 module.exports = {

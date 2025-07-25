@@ -1,4 +1,5 @@
 const tableService = require("../services/tableService");
+const Table = require("../models/table");
 
 function createTable(req, res) {
   const { number, seats, location } = req.body;
@@ -18,15 +19,13 @@ function getAllTables(req, res) {
     .catch((err) => res.status(500).json({ message: err.message }));
 }
 
-function updateAvailability(req, res) {
-  const { tableId } = req.params;
-  const { isAvailable } = req.body;
-
-  tableService.updateAvailability(tableId, isAvailable)
-    .then((table) => res.json(table))
-    .catch((err) => res.status(500).json({ message: err.message }));
+async function updateAvailability(tableId, isOccupied) {
+  return Table.findByIdAndUpdate(
+    tableId,
+    { isOccupied },
+    { new: true }
+  );
 }
-
 module.exports = {
   createTable,
   getAllTables,

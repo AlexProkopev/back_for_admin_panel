@@ -11,6 +11,10 @@ const bookingSchema = new mongoose.Schema(
       enum: ["ожидаем", "за столом"],
       default: "ожидаем",
     },
+    table:{
+      type: mongoose.Schema.Types.ObjectId,
+      ref: 'Table'
+    },
     notes: { type: String },
   },
   { timestamps: true }
