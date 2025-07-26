@@ -8,5 +8,6 @@ const { role } = require("../scripts/role");
 router.get("/", tableController.getAllTables);
 router.post("/",checkRole([role.admin, role.manager]), tableController.createTable);
 router.patch("/:tableId",checkRole([role.admin, role.manager]),  tableController.updateAvailability);
+router.delete("/:tableId",checkRole([role.admin, role.manager]),  tableController.deleteTable);
 
 module.exports = router;

@@ -26,8 +26,20 @@ async function updateAvailability(tableId, isOccupied) {
     { new: true }
   );
 }
+
+async function deleteTable(req, res) {
+  try {
+    const { tableId } = req.params;
+    await tableService.deleteTable(tableId);
+
+    res.json({ message: "Стол удален" });
+  } catch (err) {
+    res.status(500).json({ message: err.message || "Что-то пошло не так" });
+  }
+}
 module.exports = {
   createTable,
   getAllTables,
   updateAvailability,
+  deleteTable
 };
