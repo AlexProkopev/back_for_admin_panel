@@ -8,8 +8,8 @@ const bookingSchema = new mongoose.Schema(
     phone:  { type: Number, required: true },
     status: {
       type: String,
-      enum: ["ожидаем", "за столом"],
-      default: "ожидаем",
+      enum: ["Ожидаем", "за столом","На месте"],
+      default: "Ожидаем",
     },
     table:{
       type: mongoose.Schema.Types.ObjectId,

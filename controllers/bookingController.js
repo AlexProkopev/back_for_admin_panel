@@ -1,6 +1,6 @@
 const bookingService = require("../services/bookingService");
-const tableService = require("../services/tableService");
 const Table = require("../models/table");
+const Booking = require("../models/booking");
 function getAllBookings(req, res) {
   bookingService
     .getAllBookings()
@@ -9,7 +9,6 @@ function getAllBookings(req, res) {
       res.status(500).json({ message: "Ошибка при получении бронирований" })
     );
 }
-
 async function createBooking(req, res) {
   const { name, phone, date, guests, notes, table } = req.body;
 
@@ -24,18 +23,37 @@ async function createBooking(req, res) {
     if (!selectedTable) {
       return res.status(404).json({ message: "Стол не найден" });
     }
-    if (selectedTable.isOccupied) {
-      return res.status(400).json({ message: "Этот стол уже занят" });
+
+    const newBookingDate = new Date(date);
+
+    const overlappingBooking = selectedTable.bookingDate.find((b) => {
+      const existingDate = new Date(b.date);
+      return (
+        existingDate.getHours() === newBookingDate.getHours() &&
+        existingDate.toDateString() === newBookingDate.toDateString()
+      );
+    });
+
+    if (overlappingBooking) {
+      console.log("Стол уже забронирован на это время");
+      return res
+        .status(400)
+        .json({ message: "Стол уже забронирован на это время" });
     }
     const booking = await bookingService.createBooking({
       name,
       phone,
-      date,
+      date: newBookingDate,
       guests,
       notes,
       table,
     });
-    selectedTable.isOccupied = true;
+    selectedTable.bookingDate.push({
+      date: newBookingDate,
+      name,
+      phone,
+      bookingId: booking._id,
+    });
     await selectedTable.save();
     res.status(201).json(booking);
   } catch (err) {
@@ -51,22 +69,43 @@ async function deleteBooking(req, res) {
       return res.status(404).json({ message: "Бронирование не найдено" });
     }
     const tableId = currentBooking.table._id;
-    await tableService.updateAvailability(tableId, false);
+    const table = await Table.findById(tableId);
+    if (!table) {
+      return res.status(404).json({ message: "Стол не найден" });
+    }
+    table.bookingDate = table.bookingDate.filter(
+      (item) => item.bookingId.toString() !== bookingId
+    );
+    table.isOccupied = false;
+    await table.save();
     await bookingService.deleteBooking(bookingId);
-
     res.json({ message: "Бронирование удалено" });
   } catch (err) {
     res.status(500).json({ message: err.message || "Что-то пошло не так" });
   }
 }
 
-function updateBooking(req, res) {
-  const { bookingId } = req.params;
-  const updateData = req.body;
-  bookingService
-    .updateBooking(bookingId, updateData)
-    .then((updated) => res.json(updated))
-    .catch((err) => res.status(500).json({ message: err.message }));
+async function updateBooking(req, res) {
+  try {
+    const { bookingId } = req.params;
+    const updateData = req.body;
+    const currentBooking = await Booking.findById(bookingId);
+    if (!currentBooking) {
+      return res.status(404).json({ message: "Бронирование не найдено" });
+    }
+
+    Object.assign(currentBooking, updateData);
+    const updatedBooking = await currentBooking.save();
+    const table = await Table.findById(updatedBooking.table);
+    table.isOccupied = true;
+    if (!table) {
+      return res.status(404).json({ message: "Стол не найден" });
+    }
+    await table.save();
+    res.json(updatedBooking);
+  } catch (err) {
+    res.status(500).json({ message: err.message || "Что-то пошло не так" });
+  }
 }
 
 function getBookingById(req, res) {

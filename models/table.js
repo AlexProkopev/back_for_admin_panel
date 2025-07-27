@@ -6,6 +6,7 @@ const tableSchema = new mongoose.Schema(
     seats: { type: Number, required: true },
     location: { type: String, default: "Зал" },
     isOccupied: { type: Boolean, default: false },
+    bookingDate: {type: [{date: Date,name: String,phone: String, bookingId: mongoose.Schema.Types.ObjectId,},],default: [],},
   },
   { timestamps: true }
 );

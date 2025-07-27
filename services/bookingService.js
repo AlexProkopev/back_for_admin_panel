@@ -20,6 +20,7 @@ function getBookingById(id) {
   return Booking.findById(id);
 }
 
+
 module.exports = {
   createBooking,
   getAllBookings,
