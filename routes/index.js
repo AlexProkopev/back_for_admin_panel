@@ -10,16 +10,18 @@ const reviewRoutes = require("./reviewRoutes");
 const dishRoutes = require("./dishRoutes");
 const stockRoutes = require("./stockRoutes");
 const statisticsRoutes = require("./statisticsRoutes");
+const visitsRoutes = require("./visitsRoutes");
 
 
 
 router.use("/bookings", bookingRoutes);
 router.use("/table", tableRoutes);
 router.use("/staff", staffRoutes);
-router.use("/guests", guestRoutes);
+// router.use("/guests", guestRoutes);
 router.use("/reviews", reviewRoutes);
 router.use("/dishes", dishRoutes);
 router.use("/stock", stockRoutes);
 router.use("/statistics", statisticsRoutes);
+router.use("/guests", visitsRoutes);
 
 module.exports = router;

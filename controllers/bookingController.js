@@ -1,6 +1,8 @@
 const bookingService = require("../services/bookingService");
 const Table = require("../models/table");
 const Booking = require("../models/booking");
+const Visit = require("../models/visits");
+
 function getAllBookings(req, res) {
   bookingService
     .getAllBookings()
@@ -89,24 +91,48 @@ async function updateBooking(req, res) {
   try {
     const { bookingId } = req.params;
     const updateData = req.body;
+
     const currentBooking = await Booking.findById(bookingId);
     if (!currentBooking) {
       return res.status(404).json({ message: "Бронирование не найдено" });
     }
 
+    const isStatusChangingToArrived =
+      updateData.status === 'На месте' && currentBooking.status !== 'На месте';
+
     Object.assign(currentBooking, updateData);
     const updatedBooking = await currentBooking.save();
+
     const table = await Table.findById(updatedBooking.table);
-    table.isOccupied = true;
     if (!table) {
       return res.status(404).json({ message: "Стол не найден" });
     }
+    table.isOccupied = true;
     await table.save();
+
+    if (isStatusChangingToArrived) {
+      const existingVisit = await Visit.findOne({ phone: updatedBooking.phone });
+
+      if (existingVisit) {
+        existingVisit.countVisit += 1;
+        existingVisit.lastVisit = new Date();
+        await existingVisit.save();
+      } else {
+        await Visit.create({
+          phone: updatedBooking.phone,
+          name: updatedBooking.name,
+          lastVisit: new Date(),
+          countVisit: 1
+        });
+      }
+    }
+
     res.json(updatedBooking);
   } catch (err) {
     res.status(500).json({ message: err.message || "Что-то пошло не так" });
   }
 }
+
 
 function getBookingById(req, res) {
   const { bookingId } = req.params;
