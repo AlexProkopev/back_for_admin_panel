@@ -80,6 +80,13 @@ async function deleteBooking(req, res) {
     );
     table.isOccupied = false;
     await table.save();
+
+     const visit = await Visit.findOne({ phone: currentBooking.phone });
+    if (visit) {
+      visit.nowIsPlace = false;
+      await visit.save();
+    }
+    
     await bookingService.deleteBooking(bookingId);
     res.json({ message: "Бронирование удалено" });
   } catch (err) {
@@ -116,6 +123,7 @@ async function updateBooking(req, res) {
       if (existingVisit) {
         existingVisit.countVisit += 1;
         existingVisit.lastVisit = new Date();
+        existingVisit.nowIsPlace = true;
         await existingVisit.save();
       } else {
         await Visit.create({
@@ -134,19 +142,23 @@ async function updateBooking(req, res) {
 }
 
 
-function getBookingById(req, res) {
+async function getBookingById(req, res) {
   const { bookingId } = req.params;
 
-  bookingService
-    .getBookingById(bookingId)
-    .then((booking) => {
-      if (!booking) {
-        return res.status(404).json({ message: "Бронирование не найдено" });
-      }
-      res.json(booking);
-    })
-    .catch((err) => res.status(500).json({ message: err.message }));
+  try {
+    const booking = await bookingService.getBookingById(bookingId);
+    if (!booking) {
+      return res.status(404).json({ message: "Бронирование не найдено" });
+    }
+
+   
+    res.json(booking);
+  } catch (err) {
+    res.status(500).json({ message: err.message });
+  }
 }
+    
+
 
 module.exports = {
   createBooking,
