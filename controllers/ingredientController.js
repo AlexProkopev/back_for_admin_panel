@@ -12,13 +12,18 @@ async function getAllIngredients(req, res) {
 async function createIngredient(req, res) {
   const data = req.body;
 
-  if (!data.name || !data.unit || !data.costPerUnit) {
+  if (!data.name || !data.costPerUnit) {
     return res.status(400).json({ message: "Пожалуйста, заполните все обязательные поля" });
   }
 
   try {
-    const ingredient = await ingredientService.createIngredient(data);
-   
+    const convertedData = {
+      ...data,
+      costPerUnit: Number(data.costPerUnit) / 1000,
+      unit: 'гр',
+    };
+
+    const ingredient = await ingredientService.createIngredient(convertedData);
     res.status(201).json(ingredient);
   } catch (error) {
     res.status(500).json({ message: error.message });
