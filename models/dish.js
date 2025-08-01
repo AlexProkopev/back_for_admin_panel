@@ -1,23 +1,21 @@
 const mongoose = require("mongoose");
 
-const optionSchema = new mongoose.Schema(
-  {
-    name: String,
-    values: [String],
-  },
-  { _id: false }
-);
 
 const dishSchema = new mongoose.Schema(
   {
     name: { type: String, required: true },
     description: { type: String },
-    price: { type: Number, required: true },
-    weight: { type: Number },
+    price: { type: Number, default: 0 },
+    weight: { type: Number, default: 0 },
+    percent: { type: Number, default: 0 },
     category: { type: String },
-    available: { type: Boolean, default: true },
-    ingredients: [String],
-    options: [optionSchema],
+    isAvailable: { type: Boolean, default: true },
+    ingredients: [
+      {
+        ingredient: { type: mongoose.Schema.Types.ObjectId, ref: "Ingredient" },
+        quantity: { type: Number, required: true },
+      },
+    ],
   },
   { timestamps: true }
 );

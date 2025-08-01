@@ -11,6 +11,7 @@ const dishRoutes = require("./dishRoutes");
 const stockRoutes = require("./stockRoutes");
 const statisticsRoutes = require("./statisticsRoutes");
 const visitsRoutes = require("./visitsRoutes");
+const ingredientsRoutes = require("./ingredientRoutes");
 
 
 
@@ -23,5 +24,6 @@ router.use("/dishes", dishRoutes);
 router.use("/stock", stockRoutes);
 router.use("/statistics", statisticsRoutes);
 router.use("/guests", visitsRoutes);
+router.use("/ingredients", ingredientsRoutes);
 
 module.exports = router;
