@@ -13,7 +13,9 @@ async function createIngredient(req, res) {
   const data = req.body;
 
   if (!data.name || !data.costPerUnit) {
-    return res.status(400).json({ message: "Пожалуйста, заполните все обязательные поля" });
+    return res
+      .status(400)
+      .json({ message: "Пожалуйста, заполните все обязательные поля" });
   }
 
   try {
@@ -55,10 +57,13 @@ async function updateIngredient(req, res) {
       return res.status(400).json({ message: "Некорректное значение stock" });
     }
 
-    if (hasStock && data.mode === 'set') {
+    if (hasStock && data.mode === "set") {
       delete data.mode;
       data.stock = parsedStock;
-      const updatedIngredient = await ingredientService.updateIngredient(id, data);
+      const updatedIngredient = await ingredientService.updateIngredient(
+        id,
+        data
+      );
       if (!updatedIngredient) {
         return res.status(404).json({ message: "Ингредиент не найден" });
       }
@@ -80,6 +85,25 @@ async function updateIngredient(req, res) {
       updatedIngredient = await ingredientService.getIngredientById(id);
     }
 
+    if (data.costPerUnit !== undefined) {
+      const recalculatedCost = Number(data.costPerUnit) / 1000;
+      if (isNaN(recalculatedCost)) {
+        return res
+          .status(400)
+          .json({ message: "Некорректное значение costPerUnit" });
+      }
+
+      const updatedIngredientCurrent =
+        await ingredientService.getIngredientById(id);
+      if (!updatedIngredientCurrent) {
+        return res.status(404).json({ message: "Ингредиент не найден" });
+      }
+
+      updatedIngredientCurrent.costPerUnit = recalculatedCost;
+      updatedIngredient = updatedIngredientCurrent;
+      await updatedIngredientCurrent.save();
+    }
+
     if (!updatedIngredient) {
       return res.status(404).json({ message: "Ингредиент не найден" });
     }
@@ -89,8 +113,6 @@ async function updateIngredient(req, res) {
     return res.status(500).json({ message: error.message });
   }
 }
-
-
 
 async function deleteIngredient(req, res) {
   const { id } = req.params;
