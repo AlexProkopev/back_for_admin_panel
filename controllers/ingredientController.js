@@ -20,7 +20,6 @@ async function createIngredient(req, res) {
     const convertedData = {
       ...data,
       costPerUnit: Number(data.costPerUnit) / 1000,
-      unit: 'гр',
     };
 
     const ingredient = await ingredientService.createIngredient(convertedData);
@@ -49,15 +48,49 @@ async function updateIngredient(req, res) {
   const data = req.body;
 
   try {
-    const ingredient = await ingredientService.updateIngredient(id, data);
-    if (!ingredient) {
+    const hasStock = data.stock !== undefined;
+    const parsedStock = hasStock ? Number(data.stock) : null;
+
+    if (hasStock && isNaN(parsedStock)) {
+      return res.status(400).json({ message: "Некорректное значение stock" });
+    }
+
+    if (hasStock && data.mode === 'set') {
+      delete data.mode;
+      data.stock = parsedStock;
+      const updatedIngredient = await ingredientService.updateIngredient(id, data);
+      if (!updatedIngredient) {
+        return res.status(404).json({ message: "Ингредиент не найден" });
+      }
+      return res.json(updatedIngredient);
+    }
+
+    if (hasStock) {
+      await ingredientService.updateIngredient(id, {
+        $inc: { stock: parsedStock },
+      });
+      delete data.stock;
+    }
+
+    let updatedIngredient = null;
+
+    if (Object.keys(data).length > 0) {
+      updatedIngredient = await ingredientService.updateIngredient(id, data);
+    } else {
+      updatedIngredient = await ingredientService.getIngredientById(id);
+    }
+
+    if (!updatedIngredient) {
       return res.status(404).json({ message: "Ингредиент не найден" });
     }
-    res.json(ingredient);
+
+    return res.json(updatedIngredient);
   } catch (error) {
-    res.status(500).json({ message: error.message });
+    return res.status(500).json({ message: error.message });
   }
 }
+
+
 
 async function deleteIngredient(req, res) {
   const { id } = req.params;

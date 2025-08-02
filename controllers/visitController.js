@@ -1,7 +1,6 @@
 const visitService = require("../services/visitService");
 
 async function getAllGuests(req, res) {
-  console.log("Запущено");
   try {
     const data = await visitService.getAllVisits();
     console.log(data);
