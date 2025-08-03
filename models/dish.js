@@ -1,5 +1,10 @@
 const mongoose = require("mongoose");
 
+const ingredient = {
+        ingredient: { type: mongoose.Schema.Types.ObjectId, ref: "Ingredient" },
+        quantity: { type: Number, required: true },
+      }
+
 
 const dishSchema = new mongoose.Schema(
   {
@@ -10,14 +15,11 @@ const dishSchema = new mongoose.Schema(
     percent: { type: Number, default: 0 },
     category: { type: String },
     isAvailable: { type: Boolean, default: true },
-    ingredients: [
-      {
-        ingredient: { type: mongoose.Schema.Types.ObjectId, ref: "Ingredient" },
-        quantity: { type: Number, required: true },
-      },
-    ],
+    photo: { type: String },
+    ingredients: [ingredient],
   },
   { timestamps: true }
 );
 
 module.exports = mongoose.model("Dish", dishSchema);
+

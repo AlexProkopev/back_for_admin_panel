@@ -1,4 +1,5 @@
 const dishService = require("../services/dishService");
+const upload = require("../middleware/multer");
 
 async function getAllDishes(req, res) {
   try {
@@ -11,12 +12,41 @@ async function getAllDishes(req, res) {
 
 async function createDish(req, res) {
   try {
-    const newDish = await dishService.handleDishCreation(req.body);
+    const photoUrl = req.file?.path;
+
+    // Преобразуем поля, которые пришли как строки из FormData
+    const {
+      name,
+      category,
+      percent,
+      isAvailable,
+      ingredients,
+      // другие поля если есть
+    } = req.body;
+
+    // Парсим необходимые поля:
+    const parsedIngredients = JSON.parse(ingredients);
+    const parsedPercent = Number(percent);
+    const parsedIsAvailable = isAvailable === 'true';
+
+    const newDish = await dishService.handleDishCreation({
+      name,
+      category,
+      percent: parsedPercent,
+      isAvailable: parsedIsAvailable,
+      ingredients: parsedIngredients,
+      photo: photoUrl,
+    });
+
+    console.log('это новый объект блюда', newDish);
+
     res.status(201).json(newDish);
   } catch (error) {
     res.status(400).json({ message: error.message });
   }
 }
+
+const createDishWithUpload = [upload.single("photo"), createDish];
 
 async function getDishById(req, res) {
   try {
@@ -52,6 +82,7 @@ module.exports = {
   getAllDishes,
   getDishById,
   createDish,
+  createDishWithUpload,
   updateDish,
   deleteDish,
 };

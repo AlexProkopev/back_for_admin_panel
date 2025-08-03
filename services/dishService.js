@@ -21,8 +21,10 @@ function deleteDish(id) {
   return Dish.findByIdAndDelete(id);
 }
 
-async function handleDishCreation({ name, percent, category, isAvailable, ingredients }) {
+async function handleDishCreation({ name, percent, category, isAvailable, ingredients, photo }) {
+  
   if (!name || !category || !ingredients || !Array.isArray(ingredients)) {
+    
     throw new Error("Пожалуйста, заполните все обязательные поля");
   }
 
@@ -55,15 +57,18 @@ async function handleDishCreation({ name, percent, category, isAvailable, ingred
     await ingredient.save();
   }
 
-  return createDish({
+   const newDish = await Dish.create({
     name,
-    price: totalPrice,
-    weight: totalWeight,
-    percent,
     category,
     isAvailable,
+    percent,
+    price: totalPrice,
+    weight: totalWeight,
     ingredients,
+    photo, 
   });
+
+  return newDish;
 }
 
 module.exports = {
