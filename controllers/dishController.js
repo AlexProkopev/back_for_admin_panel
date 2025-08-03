@@ -14,17 +14,15 @@ async function createDish(req, res) {
   try {
     const photoUrl = req.file?.path;
 
-    // Преобразуем поля, которые пришли как строки из FormData
     const {
       name,
       category,
       percent,
       isAvailable,
       ingredients,
-      // другие поля если есть
     } = req.body;
 
-    // Парсим необходимые поля:
+
     const parsedIngredients = JSON.parse(ingredients);
     const parsedPercent = Number(percent);
     const parsedIsAvailable = isAvailable === 'true';
