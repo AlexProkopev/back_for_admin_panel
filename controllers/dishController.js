@@ -36,7 +36,6 @@ async function createDish(req, res) {
       photo: photoUrl,
     });
 
-    console.log('это новый объект блюда', newDish);
 
     res.status(201).json(newDish);
   } catch (error) {

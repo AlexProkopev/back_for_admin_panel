@@ -3,7 +3,6 @@ const visitService = require("../services/visitService");
 async function getAllGuests(req, res) {
   try {
     const data = await visitService.getAllVisits();
-    console.log(data);
     res.json(data);
   } catch (error) {
     res.status(500).json({ message: "Ошибка сервера" });

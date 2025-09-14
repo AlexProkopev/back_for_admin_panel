@@ -9,7 +9,8 @@
     "mongodb": "^6.17.0",
     "mongoose": "^8.16.0",
     "multer": "^2.0.2",
-    "multer-storage-cloudinary": "^4.0.0"
+    "multer-storage-cloudinary": "^4.0.0",
+    "serverless-http": "^4.0.0"
   },
   "name": "back_for_admin_panel",
   "version": "1.0.0",

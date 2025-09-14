@@ -22,7 +22,7 @@ function update(req, res) {
 function remove(req, res) {
   const { staffId } = req.params;
   staffService.deleteStaff(staffId)
-    .then(() => res.json({ message: "Удалено" }))
+    .then(() => res.json({ message: "Deleted" }))
     .catch(err => res.status(500).json({ message: err.message }));
 }
 

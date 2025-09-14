@@ -71,9 +71,7 @@ async function updateIngredient(req, res) {
     }
 
     if (hasStock) {
-      await ingredientService.updateIngredient(id, {
-        $inc: { stock: parsedStock },
-      });
+      await ingredientService.updateIngredient(id, { $inc: { stock: parsedStock },});
       delete data.stock;
     }
 
@@ -91,10 +89,9 @@ async function updateIngredient(req, res) {
         return res
           .status(400)
           .json({ message: "Некорректное значение costPerUnit" });
-      }
+      } 
 
-      const updatedIngredientCurrent =
-        await ingredientService.getIngredientById(id);
+      const updatedIngredientCurrent = await ingredientService.getIngredientById(id);
       if (!updatedIngredientCurrent) {
         return res.status(404).json({ message: "Ингредиент не найден" });
       }
