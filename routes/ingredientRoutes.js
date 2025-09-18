@@ -4,10 +4,10 @@ const ingredientController = require("../controllers/ingredientController");
 const checkRole = require("../middleware/checkRole");
 const { role } = require("../scripts/role");
 
-router.get("/", ingredientController.getAllIngredients);
-router.get("/:id", ingredientController.getIngredientById);
-router.post("/", checkRole([role.admin, role.manager]), ingredientController.createIngredient);
-router.patch("/:id", checkRole([role.admin, role.manager]), ingredientController.updateIngredient);
-router.delete("/:id", checkRole([role.admin, role.manager]), ingredientController.deleteIngredient);
+router.get("/", checkRole([role.manager, role.owner, role.chef]), ingredientController.getAllIngredients);
+router.get("/:id", checkRole([role.manager, role.owner, role.chef]), ingredientController.getIngredientById);
+router.post("/", checkRole([role.manager, role.owner, role.chef]), ingredientController.createIngredient);
+router.patch("/:id", checkRole([role.manager, role.owner, role.chef]), ingredientController.updateIngredient);
+router.delete("/:id", checkRole([role.manager, role.owner, role.chef]), ingredientController.deleteIngredient);
 
 module.exports = router;

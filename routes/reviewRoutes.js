@@ -6,8 +6,8 @@ const { role } = require("../scripts/role");
 
 
 router.get("/", reviewController.getAllReviews);
-router.post("/",checkRole([role.admin, role.manager]), reviewController.createReview);
-router.patch("/:id",checkRole([role.admin, role.manager]), reviewController.updateReview);
-router.delete("/:id",checkRole([role.admin, role.manager]), reviewController.deleteReview);
+router.post("/", reviewController.createReview);
+router.patch("/:id",checkRole([role.admin, role.manager, role.owner]), reviewController.updateReview);
+router.delete("/:id",checkRole([role.admin, role.manager, role.owner]), reviewController.deleteReview);
 
 module.exports = router;

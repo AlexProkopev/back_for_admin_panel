@@ -7,7 +7,7 @@ const staffSchema = new mongoose.Schema(
     passwordHash: { type: String, required: true },
     role: {
       type: String,
-      enum: ["officiant", "cook", "administrator", "cleaning", "bartender", "manager", "owner", "security"],
+      enum: ["officiant", "cook", "admin", "cleaning", "bartender", "manager", "owner", "security", "chef", "waiter"],
       default: "officiant",
     },
     refreshToken: { type: String },

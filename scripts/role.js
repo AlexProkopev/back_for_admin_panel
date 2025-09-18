@@ -1,4 +1,3 @@
-const { off } = require("process");
 
 const role = {
   admin: 'admin',
@@ -10,7 +9,6 @@ const role = {
   cleaning: 'cleaning',
   bartender: 'bartender',
   cook: 'cook',
-  administrator: 'administrator',
   officiant: 'officiant'
 };
 

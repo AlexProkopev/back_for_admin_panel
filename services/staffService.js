@@ -4,7 +4,7 @@ const bcrypt = require("bcryptjs");
 async function createStaff(data) {
   const existing = await Staff.findOne({ userName: data.userName });
   if (existing) {
-    throw new Error("UserName already exists");
+    throw new Error("Такой сотрудник уже существует");
   }
   const passwordHash = await bcrypt.hash(data.password, 10);
 
