@@ -1,4 +1,6 @@
 const staffService = require("../services/staffService");
+const {role} = require("../scripts/role");
+const { resolveSoa } = require("dns");
 
 function create(req, res) {
   staffService.createStaff(req.body)
@@ -7,8 +9,9 @@ function create(req, res) {
 }
 
 function getAll(req, res) {
+
   staffService.getAllStaff()
-    .then(data => res.json(data))
+    .then(data => res.json({data,roles:role}))
     .catch(err => res.status(500).json({ message: err.message }));
 }
 
